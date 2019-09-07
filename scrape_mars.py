@@ -20,7 +20,7 @@ def scrape():
     collection.drop()
 
     #NASA Article
-    url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
+    n_url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
 
     response = requests.get(url)
 
@@ -53,8 +53,9 @@ def scrape():
     tweets = w_soup.find("div", class_="js-tweet-text-container").text.strip()
 
     #Facts Table
-
+    facts_url = 'https://space-facts.com/mars/
     facts_df = pd.read_html('https://space-facts.com/mars/')
+    facts_df_html = facts_df.to_html(header=False, index=False)
 
     #Hemispheres Images
     hemis = ['Cerberus', 'Schiaparelli', 'Syrtis', 'Valles']
@@ -81,3 +82,21 @@ def scrape():
 
     hemi_dict = dict(zip(h_names,urls))
 
+
+
+    mars_data ={
+		'news_title' : news_title,
+		'summary': news_p,
+		'featured_image': featured_image_url,
+		'featured_image_title': featured_image_title,
+		'weather': tweets,
+		'fact_table': fact_df_html,
+		'hemisphere_image_urls': h_image_urls,
+        'news_url': n_url,
+        'jpl_url': pic_url,
+        'weather_url': weather_url,
+        'fact_url': facts_url,
+        'hemisphere_url': h_url,
+        }
+
+	collection.insert(mars_data)
