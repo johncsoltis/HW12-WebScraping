@@ -58,31 +58,19 @@ def scrape():
     facts_df_html = facts_df.to_html(header=False, index=False)
 
     #Hemispheres Images
-    hemis = ['Cerberus', 'Schiaparelli', 'Syrtis', 'Valles']
-    urls = []
-
     h_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
     browser.visit(h_url)
-    for i in hemis:
-        browser.click_link_by_partial_text(i)
-        time.sleep(2)
-        browser.click_link_by_partial_text('Sample')
-        time.sleep(2)
-        urls.append(browser.url)
+    urls = [(a.text, a['href']) for a in browser.find_by_css('div[class="description"] a')]
 
-    h_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    h_response = requests.get(h_url)
-    h_soup = BeautifulSoup(h_response.text, 'lxml')
-    soup_list = h_soup.find_all('h3')
-    names = []
-    for i in soup_list:
-        names.append(i.text) 
+    h_urls_dict = []
 
-    h_names = [i.rsplit(' ', 1)[0] for i in names]
-
-    hemi_dict = dict(zip(h_names,urls))
-
-
+    for title, url in urls:
+        h_dict = {}
+        h_dict['title'] = title
+        browser.visit(url)
+        img_url = browser.find_by_css('img[class="wide-image"]')['src']
+        h_dict['img_url'] = img_url
+        h_urls_dict.append(h_dict)
 
     mars_data ={
 		'news_title' : news_title,
