@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mission to Mars</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -29,16 +29,18 @@
 
 <!-- News Article-->
 <div class="row">
-    <div class="col-md-12"><h3 class="news_title">Latest Mars News</h3></div>
-    <span>News Title</span><br>
-    <p>New Article</p>
+    <div class="col-md-12"><h5 class="news_title">Latest Mars News</h5></div>
+    <h3>({mars.news_title})</h3><br>
+    <p>({mars.summary})</p>
 </div>
 
 <div class="row">
 <!-- Featured Image-->
         <div class="col-md-9 col-lg-9 B">
             <div class="card card-inverse card-primary">
-                <img src="#featured image" class="img-fluid" alt="featured image">
+                <h5>Featured Mars Image</h5>
+                <p>({featured_image_title})</p>
+                <img src="({mars.featured_image})" class="img-fluid" alt="featured image">
             </div>
         </div>
 <!-- Creating column for weather and facts-->
@@ -47,13 +49,15 @@
 <!-- Weather Tweet -->
                 <div class="col-md-6 col-lg-6 B h-50 pb-3">
                     <div class="card card-inverse  h-100">
-                        <a href="#">Weather Tweet</a> 
+                        <h5>Weather on Mars</h5>
+                        <p>({mars.weather)}</p>
                     </div>
                 </div>
 <!-- Fact Table -->
                 <div class="col-md-12 h-50">
                     <div class="card card-inverse  h-100">
-                        <a href="#">Fact Table</a>
+                        <h5>Mars Facts</h5>
+                        <p>({mars.facts_df_html | safe})</p>
                     </div>
                 </div>
             </div>
@@ -63,14 +67,38 @@
 
 <!-- Hemisphere Pictures-->    
 <div class="row">
-    <div class="col-6"><img src="..." class="img-fluid" alt="Hem1 image"></div>
-    <div class="col-6"><img src="..." class="img-fluid" alt="Hem2 image"></div>
-</div>
-
-<div class="row">
-    <div class="col-6"><img src="..." class="img-fluid" alt="Hem3 image"></div>
-    <div class="col-6"><img src="..." class="img-fluid" alt="Hem4 image"></div>
-</div>
+        <div class="card-body id="image>
+          <div class="col-md-12">
+            <h3 align="center" id="font">Mars Hemisphere</h3>
+            <div class="row">
+              {% for hem in mars.hemisphere_image_urls %}
+                <div class="col-md-3">
+                  <button type="button" class="btn-custom" data-toggle="modal" ><img src="{{ hem.img_url }}" class="img-thumbnail"  alt="{{hem.title}}">
+                  </button>
+                  <h6 class="card-text" align="center" id="font">{{ hem.title }}</h6>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% for hem in mars.hemisphere_image_urls %}
+        <div class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{ hem.title }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="close-botton">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <img src="{{ hem.img_url }}" class=" img-fluid"  alt="{{ hem.title }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
 
 </div>
 
