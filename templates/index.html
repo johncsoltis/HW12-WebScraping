@@ -1,106 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mission to Mars</title>
-
-    <link rel="stylesheet" href="../static/style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <head>
+      <meta charset="UTF-8">
+      <title>Mission To Mars</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 
-</head>
-<body>
+     
+    </head>
 
-<div class="container">
-
-<!-- Title and Scrape Button-->
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1 class="web_title">Mission to Mars</h1><br>
-        <a href="/scrape" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Scrape New Data</a>
-    </div>   
-</div>
-
-<!-- News Article-->
-<div class="row">
-    <div class="col-md-12"><h5 class="news_title">Latest Mars News</h5></div>
-    <h3>({mars.news_title})</h3><br>
-    <p>({mars.summary})</p>
-</div>
-
-<div class="row">
-<!-- Featured Image-->
-        <div class="col-md-9 col-lg-9 B">
-            <div class="card card-inverse card-primary">
-                <h5>Featured Mars Image</h5>
-                <p>({featured_image_title})</p>
-                <img src="({mars.featured_image})" class="img-fluid" alt="featured image">
-            </div>
-        </div>
-<!-- Creating column for weather and facts-->
-        <div class="col-md-3 col-lg-3 G">
-            <div class="row h-100">
-<!-- Weather Tweet -->
-                <div class="col-md-6 col-lg-6 B h-50 pb-3">
-                    <div class="card card-inverse  h-100">
-                        <h5>Weather on Mars</h5>
-                        <p>({mars.weather)}</p>
-                    </div>
-                </div>
-<!-- Fact Table -->
-                <div class="col-md-12 h-50">
-                    <div class="card card-inverse  h-100">
-                        <h5>Mars Facts</h5>
-                        <p>({mars.facts_df_html | safe})</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <body>
+   
+            
+    <div class="jumbotron jumbotron-fluid">
+    <h1 class="display-4" style= "text-align: center;">Mission to Mars</h1>
+    <a class="btn btn-primary btn-lg" href="/scrape" role="button" style = "margin-left: 600px; margin-right: 200px; margin-top: 20px; margin-bottom: 20px;" >Scrape Data</a>
+     </div>
+                 
+    <div class = "container">
+            
+    <div class = "row">
+        <h4>Latest Mars News</h4>
     </div>
-
-
-<!-- Hemisphere Pictures-->    
-<div class="row">
-        <div class="card-body id="image>
-          <div class="col-md-12">
-            <h3 align="center" id="font">Mars Hemisphere</h3>
-            <div class="row">
-              {% for hem in mars.hemisphere_image_urls %}
-                <div class="col-md-3">
-                  <button type="button" class="btn-custom" data-toggle="modal" ><img src="{{ hem.img_url }}" class="img-thumbnail"  alt="{{hem.title}}">
-                  </button>
-                  <h6 class="card-text" align="center" id="font">{{ hem.title }}</h6>
+    <div class = "row">
+        <p>{{mars.news}}</p>
+    </div>
+        
+    <div class = "row">
+        <div class = "col-md-6">
+            <div class="card">
+                 <img src="{{mars.featured_image}}" alt= "Featured Image" class="card-img-top">
+            <div class="card-body">
+                    <h5 class="card-title">JPL Featured Image</h5>
+            </div>
+            </div>
+        </div>
+            <div class = "col-md-6">{{mars.fact_table | safe}}</div>
+        </div>
+        <div class = "row">
+            <h4>Mars Weather:</h4>
+                <p> {{mars.weather}}</p>
+        </div>
+            <div class = "row">
+                <h4>Hemisphere Images</h4>                   
+            </div>
+            <div class = "row">
+                <div class = "col-md-6">
+                    <div class="card" >
+                        <img src={{mars.hemispheres[0][0]}} class="card-img-top" alt="Hemisphere Image">
+                        <div class="card-body">
+                          <h5 class="card-title">{{mars.hemispheres[1][0]}}</h5>
+                                                
+                        </div>
+                      </div>
+               </div>
+                <div class = "col-md-6">
+                    <div class="card" >
+                        <img src={{mars.hemispheres[0][1]}} class="card-img-top" alt="Hemisphere Image">
+                        <div class="card-body">
+                          <h5 class="card-title">{{mars.hemispheres[1][1]}}</h5>
+                        </div>
+                    </div>    
                 </div>
-              {% endfor %}
+                </div>
+                <div class = "row">
+                <div class = "col-md-6">
+                    <div class="card" >
+                        <img src={{mars.hemispheres[0][2]}} class="card-img-top" alt="Hemisphere Image">
+                        <div class="card-body">
+                          <h5 class="card-title">{{mars.hemispheres[1][2]}}</h5>
+                        </div>
+                    </div>
+                </div>        
+                <div class = "col-md-6">
+                    <div class="card" >
+                        <img src={{mars.hemispheres[0][3]}} class="card-img-top" alt="Hemisphere Image">
+                        <div class="card-body">
+                          <h5 class="card-title">{{mars.hemispheres[1][3]}}</h5>
+                        </div>
+                    </div>
+                </div>        
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      {% for hem in mars.hemisphere_image_urls %}
-        <div class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ hem.title }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" id="close-botton">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <img src="{{ hem.img_url }}" class=" img-fluid"  alt="{{ hem.title }}">
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-
-</div>
-
-</body>
+        
+    </body>
 </html>

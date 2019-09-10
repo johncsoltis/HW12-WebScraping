@@ -1,77 +1,107 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 import requests
 from splinter import Browser
-import time
 import pandas as pd
-import pymongo
 
-client = pymongo.MongoClient('mongodb://localhost:27017')
-db = client.mars_db
-collection = db.mars 
+def scrape_news():
+    
+    n_url = 'https://mars.nasa.gov/news/'
+    response = requests.get(n_url)
+    soup = bs(response.text, 'lxml')
 
-def scrape():
+    n_heads = soup.find_all('div', class_ = 'content_title')
+    n_text = soup.find_all('div', class_ = 'article_teaser_body')
 
-    n_url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
+    headlines = []
+    for h in n_heads:
+        h = h.text.strip()
+        headlines.append(h)
 
+    headlines = headlines[0]   
+    
+    
+    return headlines
+    
+def scrape_weather():
+    
+    w_url = "https://twitter.com/marswxreport?lang=en"
+    response = requests.get(w_url)
+    
+    soup = bs(response.text, 'lxml')
+    weather = soup.find_all('p')
+    tweet = weather[4].text.strip()
+    
+    return tweet
+    
+def scrape_featured_image():
     executable_path = {'executable_path': 'chromedriver.exe'}
     browser = Browser('chrome', **executable_path, headless=True)
-    browser.visit(n_url)
-
-    news_p = browser.find_by_css('div[class="article_teaser_body"]').text
-    news_title = browser.find_by_css('div[class="content_title"]').text
-
-    pic_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-    browser.visit(pic_url)
-
+    url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    browser.visit(url)
     browser.click_link_by_partial_text('FULL IMAGE')
-    time.sleep(2)
-    browser.click_link_by_partial_text('more info')
-    time.sleep(2)
-    featured_image_title = browser.find_by_css('h1[class="article_title"]').text
-    browser.find_link_by_text('800 x 600').first
-    featured_image_url = browser.url
+    
+    html = browser.html
+    soup = bs(html, 'lxml')
+    image = soup.find_all('a', class_ = 'button')
+    image_url = "https://www.jpl.nasa.gov" + (image[0]['data-link'])
+    
+    #large image:
+    browser.visit(image_url)
+    html = browser.html
+    
+    #assign to var
+    soup = bs(html, 'lxml')
+    links = soup.find_all('div', class_ = 'download_tiff')
+    link = links[1].a['href']
+    image_link = "https:" + link
+    
+    return image_link
+    
+def scrape_facts():
 
-    weather_url = 'https://twitter.com/marswxreport?lang=en'
-    browser.visit(weather_url)
-    wbrow = browser.html
-    w_soup = BeautifulSoup(wbrow, 'lxml')
-    tweets = w_soup.find("div", class_="js-tweet-text-container").text.strip()
-
-    facts_url = 'https://space-facts.com/mars/'
     facts_df = pd.read_html('https://space-facts.com/mars/')
-    facts_df = pd.DataFrame(facts_df)
+    facts_df = facts_df[1]
 
-    facts_df_html = facts_df.to_html(header=False, index=False)
+    mars_facts = facts_df.to_html(header=False, index=False)
+    
+    return mars_facts
+    
+def scrape_hemispheres():
+    executable_path = {'executable_path': 'chromedriver.exe'}
+    browser = Browser('chrome', **executable_path, headless=True)
+    
+    url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+    hemispheres = ['Cerberus', 'Schiaparelli', 'Syrtis Major', 'Valles']
+    #temp lits
+    h_names = []
+    h_urls = []
 
-    h_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    browser.visit(h_url)
-    urls = [(a.text, a['href']) for a in browser.find_by_css('div[class="description"] a')]
-
-    h_urls_dict = []
-
-    for title, url in urls:
-        h_dict = {}
-        h_dict['title'] = title
+    #loop to get all urls/titles
+    for hemisphere in hemispheres:
         browser.visit(url)
-        img_url = browser.find_by_css('img[class="wide-image"]')['src']
-        h_dict['img_url'] = img_url
-        h_urls_dict.append(h_dict)
-
-    browser.quit()
-
-    mars_data ={
-		'news_title' : news_title,
-		'summary': news_p,
-		'featured_image': featured_image_url,
-		'featured_image_title': featured_image_title,
-		'weather': tweets,
-		'fact_table': facts_df_html,
-		'hemisphere_image_urls': h_urls_dict,
-        'news_url': n_url,
-        'pic_url': pic_url,
-        'weather_url': weather_url,
-        'facts_url': facts_url,
-        'hemisphere_url': h_url,
-    }
+        browser.click_link_by_partial_text(hemisphere)
+        html = browser.html
+        soup = bs(html, 'lxml')
+        tempname = soup.find_all('h2', class_ = 'title')
+        tempurl = soup.find_all('li')
+        h_urls.append(tempurl[0].a['href'])
+        h_names.append(tempname[0].text)
         
-    collection.insert(mars_data)
+    return h_urls, h_names
+
+def scrape_all():
+    news = scrape_news()
+    weather = scrape_weather()
+    feat_image = scrape_featured_image()
+    facts = scrape_facts()
+    hemispheres = scrape_hemispheres()
+    
+   
+    mars_data = {"news" : news, 
+                       "weather" : weather,
+                       "featured_image" : feat_image,
+                       "fact_table" : facts,
+                       "hemispheres" : hemispheres}
+    
+    return mars_data
+    
